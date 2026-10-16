@@ -1,0 +1,18 @@
+{
+    "name": "jvapl/phpblog",
+    "description": "php exercices to learn back-end php and front-end php",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Jvapl\\Phpblog\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jvapl"
+        }
+    ],
+    "require-dev": {
+        "laravel/pint": "^1.32"
+    }
+}

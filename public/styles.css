@@ -163,7 +163,7 @@ footer {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    min-width: 50rem;
+    width: 100%;
     margin: 25px 0;
     padding: 30px;
     background-color: #E9EEE6;
@@ -194,7 +194,7 @@ footer {
 }
 
 .small-form {
-    max-width: 430px;
+    max-width: 600px;
 }
 
 .article-box {

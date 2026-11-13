@@ -1,4 +1,5 @@
 <?php
+include '../src/constants.php';
 $errors = [];
 
 $userId = 1;
@@ -9,20 +10,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
     $imageUp = null;
     
     if ($title === ''){
-        $errors[] = "Title is missing";
+        $errors[] = ERROR_MSG_TITLE;
     }
  
     if ($content === ''){
-        $errors[] = "Content is missing";
+        $errors[] = ERROR_MSG_CONTENT;
     }
 
     if (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE){
         $file = $_FILES['image'];
 
         if ($file['error'] !== UPLOAD_ERR_OK){
-            $errors[] = 'The upload failed';
+            $errors[] = ERROR_MSG_UPLOAD;
         } elseif ($file['size'] > 200 * 1024 * 1024) {
-            $errors[] = "The image is too large (200MB MAX)";
+            $errors[] = ERROR_MSG_IMG;
         } else {
             $uploadDir = __DIR__ . '/uploads/';
             $mediaType = mime_content_type($file['tmp_name']);
@@ -36,12 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             ];
 
             if (!isset($allowedTypes[$mediaType])){
-                $errors[] = 'Please upload a JPEG, PNG or GIF image';
+                $errors[] = ERROR_MSG_IMG_TYPE;
             } else {
                 if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)){
                     // Create the upload directory if it doesn't exist
 
-                    $errors[] = 'Could not create the upload directory';
+                    $errors[] = ERROR_MSG_UPLOAD_DIR;
                 } else {
                     $fileName = bin2hex(random_bytes(16)) . '.' . $allowedTypes[$mediaType];
                     // Generate a random filename: 16 random bytes converted to hexadecimal
@@ -49,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
                     $destination = $uploadDir . $fileName;
 
                     if (!move_uploaded_file($file['tmp_name'], $destination)){
-                        $errors[] = 'Could not save the uploaded image';
+                        $errors[] = ERROR_MSG_UPLOAD_IMG;
                     } else {
                         $imageUp = 'uploads/' . $fileName;
                     }
@@ -80,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             exit;
         } catch (Exception $e){
             error_log($e->getMessage());
-            $errors[] = 'Something went wrong while saving post';
+            $errors[] = ERROR_MSG_SAVING_POST;
         }
     }
 }

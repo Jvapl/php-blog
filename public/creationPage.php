@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../src/database/Database.php';
 include '../src/constants.php';
 $errors = [];
 
@@ -64,9 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
         $dateCreated = $createdAt->format('Y-m-d H:i:s');
 
         try {
-            $pdo = new PDO('sqlite:' . __DIR__ . '/../src/database/database.db');
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+            $pdo = Database::connect();
             $stmt = $pdo->prepare('INSERT INTO posts (user_id, title, image, content, created_at) VALUES (:user_id ,:title, :image, :content, :created_at)');
 
             $stmt->execute([

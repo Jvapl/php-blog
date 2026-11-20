@@ -8,5 +8,6 @@
     const ERROR_MSG_UPLOAD_DIR = 'Could not create the upload directory';
     const ERROR_MSG_UPLOAD_IMG = 'Could not save the uploaded image';
     const ERROR_MSG_SAVING_POST = 'Something went wrong while saving post';
+    const ERROR_MSG_GET_DATA = "Couldn't get data from database";
 
 ?>

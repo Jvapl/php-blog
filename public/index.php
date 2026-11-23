@@ -1,16 +1,34 @@
 <?php
 require_once __DIR__ . '/../src/database/Database.php';
+include '../src/constants.php';
 
 $pdo = Database::connect();
+
+$errors = [];
+
+try {
+    $pdo = Database::connect();
+    $stmt = $pdo->query('SELECT posts. *, users.name AS author FROM posts JOIN users ON posts.user_id = users.id ORDER BY posts.created_at DESC');
+    $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    error_log($e->getMessage());
+    $errors[] = ERROR_MSG_GET_DATA;
+    $posts = [];
+}
+
+$imageClasses = ['first-image', 'second-image', 'third-image'];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PHP Blog - Home</title>
     <link rel="stylesheet" href="./styles.css">
 </head>
+
 <body>
     <nav class="nav-bar">
         <h1>PHP Blog</h1>
@@ -34,101 +52,37 @@ $pdo = Database::connect();
         <p class="secondary-text">Discover ideas shared by our community.</p>
 
         <div class="post-list">
-            <article class="post-card">
-                <div class="post-image">01</div>
-                <p class="article-info">12/06/2026 · Mariana Costa</p>
-                <h3>The beauty of starting slowly</h3>
-                <p>Not everything has to happen at once. Sometimes, taking the first step is enough.</p>
-                <a href="detailPage.php">Read post →</a>
-            </article>
+            <?php foreach ($posts as $index => $post): ?>
+                <?php
+                $contentCharLess = mb_substr($post['content'], 0, 180);
+                $hasMore = mb_strlen($post['content']) > 180;
 
-            <article class="post-card">
-                <div class="post-image second-image">02</div>
-                <p class="article-info">10/06/2026 · Lucas Martin</p>
-                <h3>Small moments in everyday life</h3>
-                <p>A walk, a coffee, or a conversation can give us new ideas.</p>
-                <a href="detailPage.php">Read post →</a>
-            </article>
+                $imageClass = $imageClasses[$index % 3];
+                ?>
 
-            <article class="post-card">
-                <div class="post-image third-image">03</div>
-                <p class="article-info">08/06/2026 · Emma Bernard</p>
-                <h3>Taking time to listen</h3>
-                <p>Listening helps us discover new stories and different points of view.</p>
-                <a href="detailPage.php">Read post →</a>
-            </article>
+                <article class="post-card">
+                    <div class="post-image <?= $imageClass ?>">
 
-            <article class="post-card">
-                <div class="post-image">01</div>
-                <p class="article-info">12/06/2026 · Mariana Costa</p>
-                <h3>The beauty of starting slowly</h3>
-                <p>Not everything has to happen at once. Sometimes, taking the first step is enough.</p>
-                <a href="detailPage.php">Read post →</a>
-            </article>
+                        <?php if (!empty($post['image'])): ?>
+                            <img src="<?= htmlspecialchars($post['image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>">
+                        <?php else : ?>
+                            <?= $index + 1 ?>
+                        <?php endif; ?>
 
-            <article class="post-card">
-                <div class="post-image second-image">02</div>
-                <p class="article-info">10/06/2026 · Lucas Martin</p>
-                <h3>Small moments in everyday life</h3>
-                <p>A walk, a coffee, or a conversation can give us new ideas.</p>
-                <a href="detailPage.php">Read post →</a>
-            </article>
+                    </div>
 
-            <article class="post-card">
-                <div class="post-image third-image">03</div>
-                <p class="article-info">08/06/2026 · Emma Bernard</p>
-                <h3>Taking time to listen</h3>
-                <p>Listening helps us discover new stories and different points of view.</p>
-                <a href="detailPage.php">Read post →</a>
-            </article>
+                    <p class="article-info">
+                        <?= htmlspecialchars($post['created_at']) ?> -
+                        <?= htmlspecialchars($post['author']) ?> .
+                    </p>
 
-            <article class="post-card">
-                <div class="post-image">01</div>
-                <p class="article-info">12/06/2026 · Mariana Costa</p>
-                <h3>The beauty of starting slowly</h3>
-                <p>Not everything has to happen at once. Sometimes, taking the first step is enough.</p>
-                <a href="detailPage.php">Read post →</a>
-            </article>
-
-            <article class="post-card">
-                <div class="post-image second-image">02</div>
-                <p class="article-info">10/06/2026 · Lucas Martin</p>
-                <h3>Small moments in everyday life</h3>
-                <p>A walk, a coffee, or a conversation can give us new ideas.</p>
-                <a href="detailPage.php">Read post →</a>
-            </article>
-
-            <article class="post-card">
-                <div class="post-image third-image">03</div>
-                <p class="article-info">08/06/2026 · Emma Bernard</p>
-                <h3>Taking time to listen</h3>
-                <p>Listening helps us discover new stories and different points of view.</p>
-                <a href="detailPage.php">Read post →</a>
-            </article>
-
-            <article class="post-card">
-                <div class="post-image">01</div>
-                <p class="article-info">12/06/2026 · Mariana Costa</p>
-                <h3>The beauty of starting slowly</h3>
-                <p>Not everything has to happen at once. Sometimes, taking the first step is enough.</p>
-                <a href="detailPage.php">Read post →</a>
-            </article>
-
-            <article class="post-card">
-                <div class="post-image second-image">02</div>
-                <p class="article-info">10/06/2026 · Lucas Martin</p>
-                <h3>Small moments in everyday life</h3>
-                <p>A walk, a coffee, or a conversation can give us new ideas.</p>
-                <a href="detailPage.php">Read post →</a>
-            </article>
-
-            <article class="post-card">
-                <div class="post-image third-image">03</div>
-                <p class="article-info">08/06/2026 · Emma Bernard</p>
-                <h3>Taking time to listen</h3>
-                <p>Listening helps us discover new stories and different points of view.</p>
-                <a href="detailPage.php">Read post →</a>
-            </article>
+                    <h3><?= htmlspecialchars($post['title']) ?></h3>
+                    <p>
+                        <?= nl2br(htmlspecialchars($contentCharLess)); ?>
+                    </p>
+                    <a href="detailPage.php">Read post →</a>
+                </article>
+            <?php endforeach; ?>
         </div>
     </main>
     <?php
@@ -136,4 +90,5 @@ $pdo = Database::connect();
     echo $footerHTML
     ?>
 </body>
+
 </html>

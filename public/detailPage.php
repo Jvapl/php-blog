@@ -8,7 +8,7 @@
 </head>
 <body>
     <nav class="nav-bar">
-        <h1>PHP Blog</h1>
+        <h1><a href="index.php">PHP Blog</a></h1>
         <div class="nav-components">
             <a class="navButtonClass" href="index.php">Home</a>
             <a class="navButtonClass" href="loginPage.php">Log in</a>

@@ -31,7 +31,7 @@ $imageClasses = ['first-image', 'second-image', 'third-image'];
 
 <body>
     <nav class="nav-bar">
-        <h1>PHP Blog</h1>
+        <h1><a href="index.php">PHP Blog</a></h1>
         <div class="nav-components">
             <a class="navButtonClass" href="index.php">Home</a>
             <a class="navButtonClass" href="loginPage.php">Log in</a>
@@ -79,16 +79,18 @@ $imageClasses = ['first-image', 'second-image', 'third-image'];
                     <h3><?= htmlspecialchars($post['title']) ?></h3>
                     <p>
                         <?= nl2br(htmlspecialchars($contentCharLess)); ?>
+                        <?= $hasMore ? '...' : '' ?>
                     </p>
-                    <a href="detailPage.php">Read post →</a>
+                    <a href="editionPage.php?id=<?= urlencode($post['id']); ?>">Edit post →
+                    </a>
                 </article>
             <?php endforeach; ?>
         </div>
     </main>
     <?php
     include 'components/footer.php';
-    echo $footerHTML
-    ?>
+echo $footerHTML
+?>
 </body>
 
 </html>

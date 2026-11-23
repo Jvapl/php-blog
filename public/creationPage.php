@@ -1,66 +1,29 @@
 <?php
 require_once __DIR__ . '/../src/database/Database.php';
+require_once __DIR__ . '/../public/functions/functions.php';
 include '../src/constants.php';
 $errors = [];
+$helpers = new Functions();
 
 $userId = 1;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim((string) filter_input(INPUT_POST, 'title', FILTER_UNSAFE_RAW));
     $content = trim((string) filter_input(INPUT_POST, 'content', FILTER_UNSAFE_RAW));
     $imageUp = null;
-    
-    if ($title === ''){
+
+    if ($title === '') {
         $errors[] = ERROR_MSG_TITLE;
     }
- 
-    if ($content === ''){
+
+    if ($content === '') {
         $errors[] = ERROR_MSG_CONTENT;
     }
 
-    if (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE){
-        $file = $_FILES['image'];
+    $result = $helpers->fileAdder($_FILES ?? null);
+    $imageUp = $result["image"];
 
-        if ($file['error'] !== UPLOAD_ERR_OK){
-            $errors[] = ERROR_MSG_UPLOAD;
-        } elseif ($file['size'] > 200 * 1024 * 1024) {
-            $errors[] = ERROR_MSG_IMG;
-        } else {
-            $uploadDir = __DIR__ . '/uploads/';
-            $mediaType = mime_content_type($file['tmp_name']);
-            // send file data type exemple (image/jpeg)
-            // Detect the file's MIME type using its temporary path.
-
-            $allowedTypes = [
-                'image/jpeg' => 'jpg',
-                'image/png' => 'png',
-                'image/gif' => 'gif'
-            ];
-
-            if (!isset($allowedTypes[$mediaType])){
-                $errors[] = ERROR_MSG_IMG_TYPE;
-            } else {
-                if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)){
-                    // Create the upload directory if it doesn't exist
-
-                    $errors[] = ERROR_MSG_UPLOAD_DIR;
-                } else {
-                    $fileName = bin2hex(random_bytes(16)) . '.' . $allowedTypes[$mediaType];
-                    // Generate a random filename: 16 random bytes converted to hexadecimal
-
-                    $destination = $uploadDir . $fileName;
-
-                    if (!move_uploaded_file($file['tmp_name'], $destination)){
-                        $errors[] = ERROR_MSG_UPLOAD_IMG;
-                    } else {
-                        $imageUp = 'uploads/' . $fileName;
-                    }
-                }
-            }
-        }
-    }
-
-    if (empty($errors)){
+    if (empty($errors)) {
         $createdAt = new DateTime('now', new DateTimeZone('UTC'));
         $dateCreated = $createdAt->format('Y-m-d H:i:s');
 
@@ -78,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
             header('Location: /detailPage.php');
             exit;
-        } catch (Exception $e){
+        } catch (Exception $e) {
             error_log($e->getMessage());
             $errors[] = ERROR_MSG_SAVING_POST;
         }
@@ -89,15 +52,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create a post - PHP Blog</title>
     <link rel="stylesheet" href="./styles.css">
 </head>
+
 <body>
     <nav class="nav-bar">
-        <h1>PHP Blog</h1>
+        <h1><a href="index.php">PHP Blog</a></h1>
         <div class="nav-components">
             <a class="navButtonClass" href="index.php">Home</a>
             <a class="navButtonClass" href="loginPage.php">Log in</a>
@@ -121,12 +86,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             <textarea id="content" name="content" placeholder="Write your post here..." required></textarea>
 
             <button class="ButtonClass" type="submit">Publish post</button>
-        </form> 
+        </form>
     </main>
 
     <?php
     include 'components/footer.php';
-    echo $footerHTML
-    ?>
+echo $footerHTML
+?>
 </body>
+
 </html>

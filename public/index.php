@@ -16,8 +16,6 @@ try {
     $posts = [];
 }
 
-function wordSlice() {};
-
 $imageClasses = ['first-image', 'second-image', 'third-image'];
 
 ?>
@@ -55,7 +53,12 @@ $imageClasses = ['first-image', 'second-image', 'third-image'];
 
         <div class="post-list">
             <?php foreach ($posts as $index => $post): ?>
-                <?php $imageClass = $imageClasses[$index % 3]; ?>
+                <?php
+                $contentCharLess = mb_substr($post['content'], 0, 180);
+                $hasMore = mb_strlen($post['content']) > 180;
+
+                $imageClass = $imageClasses[$index % 3];
+                ?>
 
                 <article class="post-card">
                     <div class="post-image <?= $imageClass ?>">
@@ -74,7 +77,9 @@ $imageClasses = ['first-image', 'second-image', 'third-image'];
                     </p>
 
                     <h3><?= htmlspecialchars($post['title']) ?></h3>
-                    <p><?= nl2br(htmlspecialchars($post['content'])) ?></p>
+                    <p>
+                        <?= nl2br(htmlspecialchars($contentCharLess)); ?>
+                    </p>
                     <a href="detailPage.php">Read post →</a>
                 </article>
             <?php endforeach; ?>

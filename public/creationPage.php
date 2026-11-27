@@ -3,7 +3,7 @@ require_once __DIR__ . '/../src/database/Database.php';
 require_once __DIR__ . '/../public/functions/functions.php';
 include '../src/constants.php';
 $errors = [];
-$helpers = new Functions();
+$helpers = new Services();
 
 $userId = 1;
 

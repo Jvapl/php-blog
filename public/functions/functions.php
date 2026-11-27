@@ -1,6 +1,6 @@
 <?php
 
-class functions
+class Services
 {
     public function postInfo(array $data): array
     {
@@ -8,11 +8,11 @@ class functions
         $content = trim((string) ($data['content'] ?? ''));
         $errors = [];
 
-        if ($title === '') {
+        if ($title === '' | mb_strlen($title) >= 60) {
             $errors[] = ERROR_MSG_TITLE;
         }
 
-        if ($content === '') {
+        if ($content === '' | mb_strlen($content) >= 1000) {
             $errors[] = ERROR_MSG_CONTENT;
         }
         return [
@@ -24,9 +24,6 @@ class functions
 
     public function fileAdder(?array $file): array
     {
-        $errors = [];
-        $imagePath = null;
-
         if ($file === null || $file['error'] === UPLOAD_ERR_NO_FILE) {
             return [
                 'image' => null,
@@ -35,45 +32,41 @@ class functions
         }
 
         if ($file['error'] !== UPLOAD_ERR_OK) {
-            $errors[] = ERROR_MSG_UPLOAD;
-        } elseif ($file['size'] > 200 * 1024 * 1024) {
-            $errors[] = ERROR_MSG_IMG;
-        } else {
-            $uploadDir = __DIR__ . '/../uploads/';
-            $mediaType = mime_content_type($file['tmp_name']);
-            // send file data type exemple (image/jpeg)
-            // Detect the file's MIME type using its temporary path.
-
-            $allowedTypes = [
-                'image/jpeg' => 'jpg',
-                'image/png' => 'png',
-                'image/gif' => 'gif',
-            ];
-
-            if (!isset($allowedTypes[$mediaType])) {
-                $errors[] = ERROR_MSG_IMG_TYPE;
-            } elseif (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)) {
-                // Create the upload directory if it doesn't exist
-
-                $errors[] = ERROR_MSG_UPLOAD_DIR;
-            } else {
-                $fileName = bin2hex(random_bytes(16)) . '.' . $allowedTypes[$mediaType];
-                // Generate a random filename: 16 random bytes converted to hexadecimal
-
-                $destination = $uploadDir . $fileName;
-
-                if (!move_uploaded_file($file['tmp_name'], $destination)) {
-                    $errors[] = ERROR_MSG_UPLOAD_IMG;
-                } else {
-                    $imagePath = 'uploads/' . $fileName;
-                }
-            }
+            return ['image' => null, 'errors' => [ERROR_MSG_UPLOAD]];
         }
 
-        return [
-            'image' => $imagePath,
-            'errors' => $errors,
+        if ($file['size'] > 200 * 1024 * 1024) {
+            return ['image' => null, 'errors' => [ERROR_MSG_IMG]];
+        }
+
+        $uploadDir = __DIR__ . '/../uploads/';
+        $mediaType = mime_content_type($file['tmp_name']);
+        // Detect the file's MIME type using its temporary path.
+
+        $allowedTypes = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/gif' => 'gif',
         ];
+
+        if (!isset($allowedTypes[$mediaType])) {
+            return ['image' => null, 'errors' => [ERROR_MSG_IMG_TYPE]];
+        }
+
+        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)) {
+            return ['image' => null, 'errors' => [ERROR_MSG_UPLOAD_DIR]];
+        }
+
+        $fileName = bin2hex(random_bytes(16)) . '.' . $allowedTypes[$mediaType];
+        // Generate a random filename: 16 random bytes converted to hexadecimal
+
+        $destination = $uploadDir . $fileName;
+
+        if (!move_uploaded_file($file['tmp_name'], $destination)) {
+            return ['image' => null, 'errors' => [ERROR_MSG_UPLOAD_IMG]];
+        }
+
+        return ['image' => 'uploads/' . $fileName, 'errors' => []];
     }
 
     public function editId(int $postId): array | null

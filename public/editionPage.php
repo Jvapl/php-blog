@@ -3,24 +3,21 @@ require_once __DIR__ . '/../src/database/Database.php';
 require_once __DIR__ . '/../public/functions/functions.php';
 include '../src/constants.php';
 
-$helpers = new functions();
+$helpers = new Services();
 $errors = [];
 $postId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 $post = null;
 
 if ($postId === false || $postId === null) {
-    $errors[] = ERROR_MSG_GET_ID;
-} else {
-    try {
-        $post = $helpers->editId($postId);
+    http_response_code(400);
+    exit('Invalid ID');
+}
 
-        if ($post === null) {
-            $errors[] = "";
-        }
-    } catch (Exception $e) {
-        error_log($e->getMessage());
-        $errors[] = ERROR_MSG_GET_DATA;
-    }
+$post = $helpers->editId($postId);
+
+if ($post === null) {
+    http_response_code(404);
+    exit("Couldn't find Post");
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $post !== null) {
@@ -51,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $post !== null) {
                 ':id' => $postId
             ]);
 
-            if (!empty($post['image'])) {
+            if (!empty($post['image']) && $imageUp !== $post['image']) {
                 $helpers->removeFile($post['image']);
             }
 

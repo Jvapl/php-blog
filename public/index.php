@@ -89,8 +89,8 @@ $imageClasses = ['first-image', 'second-image', 'third-image'];
     </main>
     <?php
     include 'components/footer.php';
-echo $footerHTML
-?>
+    echo $footerHTML
+    ?>
 </body>
 
 </html>

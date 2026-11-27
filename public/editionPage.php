@@ -25,6 +25,7 @@ if ($postId === false || $postId === null) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $post !== null) {
     $formData = $helpers->postInfo($_POST);
+    $errors = array_merge($errors, $formData['errors']);
     $imageUp = $post['image'];
 
 
@@ -50,7 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $post !== null) {
                 ':id' => $postId
             ]);
 
-            header('Location: /editionPage.php?id=' . $postId);
+            if (!empty($post['image'])) {
+                $helpers->removeFile($post['image']);
+            }
+
+            header('Location: /index.php');
             exit;
         } catch (Exception $e) {
             error_log($e->getMessage());
@@ -97,14 +102,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $post !== null) {
             <label for="content">Content</label>
             <textarea id="content" name="content"><?= htmlspecialchars($post['content']) ?></textarea>
 
-            <button class="ButtonClass" type="submit" href="detailPage.php">Save changes</button>
+            <button class="ButtonClass" type="submit" href="index.php">Save changes</button>
         </form>
     </main>
 
     <?php
     include 'components/footer.php';
-echo $footerHTML
-?>
+    echo $footerHTML
+    ?>
 </body>
 
 </html>

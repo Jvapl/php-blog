@@ -76,12 +76,18 @@ class functions
         ];
     }
 
-    public function editId(int $postId): array
+    public function editId(int $postId): array | null
     {
         $pdo = Database::connect();
         $stmt = $pdo->prepare('SELECT id, title, image, content FROM posts WHERE id = ?');
         $stmt->execute([$postId]);
         $post = $stmt->fetch(PDO::FETCH_ASSOC);
         return $post === false ? null : $post;
+    }
+
+    public function removeFile(string $imagePath): bool
+    {
+        $filePath = __DIR__ . '/../' . $imagePath;
+        return is_file($filePath) && unlink($filePath);
     }
 }

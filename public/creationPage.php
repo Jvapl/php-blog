@@ -20,8 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = ERROR_MSG_CONTENT;
     }
 
-    $result = $helpers->fileAdder($_FILES ?? null);
-    $imageUp = $result["image"];
+    $result = $helpers->fileAdder($_FILES['image'] ?? null);
+    $errors = array_merge($errors, $result['errors']);
+    $imageUp = $result['image'];
 
     if (empty($errors)) {
         $createdAt = new DateTime('now', new DateTimeZone('UTC'));
@@ -91,8 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <?php
     include 'components/footer.php';
-echo $footerHTML
-?>
+    echo $footerHTML
+    ?>
 </body>
 
 </html>

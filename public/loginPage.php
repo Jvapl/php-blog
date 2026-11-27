@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log in - PHP Blog</title>
     <link rel="stylesheet" href="./styles.css">
 </head>
+
 <body>
     <nav class="nav-bar">
-        <h1>PHP Blog</h1>
+        <h1><a href="index.php">PHP Blog</a></h1>
         <div class="nav-components">
             <a class="navButtonClass" href="index.php">Home</a>
             <a class="navButtonClass" href="loginPage.php">Log in</a>
@@ -37,4 +39,5 @@
     echo $footerHTML;
     ?>
 </body>
+
 </html>
